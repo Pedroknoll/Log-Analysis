@@ -17,3 +17,13 @@ def make_query(query):
     c.execute(query)
     return c.fetchall()
     db.close()
+
+# 1. query to retrieve the most popular three articles of all timestamp
+query_one = ("select title, count(title) as views"
+                "from articles"
+                "articles,log"
+                "where concat('/article/',articles.slug) = log.path"
+                "and log.status = '200 OK'"
+                "group by articles.title"
+                "order by views DESC"
+                "limit 3";)

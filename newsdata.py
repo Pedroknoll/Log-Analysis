@@ -18,7 +18,7 @@ def make_query(query):
     return c.fetchall()
     db.close()
 
-# 1. query to retrieve the most popular three articles of all timestamp
+# 1. query to return the three most popular three articles of all time
 query_one = ("select title, count(title) as views"
                 "from articles"
                 "articles,log"
@@ -26,4 +26,13 @@ query_one = ("select title, count(title) as views"
                 "and log.status = '200 OK'"
                 "group by articles.title"
                 "order by views DESC"
-                "limit 3";)
+                "limit 3;")
+
+# 2. query to return the most popular article authors of all time?
+query_two = ("select authors.name, count(articles.author) as views"
+                "from articles"
+                "articles,log, authors"
+                "where concat('/article/',articles.slug) = log.path"
+                "and log.status ='200 OK'"
+                "and articles.author = authors.id"
+                "group by authors.name DESC;")

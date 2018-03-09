@@ -10,7 +10,7 @@ import psycopg2
 
 DBNAME = "newsdata"
 
-# A method to performe a query in database
+# A method to perform a query in database
 def make_query(query):
     db = psycopg2.connect(dbname=DBNAME)
     c = db.cursor()
@@ -19,20 +19,48 @@ def make_query(query):
     db.close()
 
 # 1. query to return the three most popular three articles of all time
-query_one = ("select title, count(title) as views"
-                "from articles"
-                "articles,log"
-                "where concat('/article/',articles.slug) = log.path"
-                "and log.status = '200 OK'"
-                "group by articles.title"
-                "order by views DESC"
-                "limit 3;")
+query_one = """
+            SELECT title, COUNT(title) AS views
+            FROM articles
+            articles, log
+            WHERE concat('/article/', articles.slug) = log.path
+            AND log.status LIKE '%200%'
+            GROUP BY articles.title
+            ORDER BY views DESC
+            LIMIT 3;
+            """
 
 # 2. query to return the most popular article authors of all time?
-query_two = ("select authors.name, count(articles.author) as views"
-                "from articles"
-                "articles,log, authors"
-                "where concat('/article/',articles.slug) = log.path"
-                "and log.status ='200 OK'"
-                "and articles.author = authors.id"
-                "group by authors.name DESC;")
+query_two = """
+            SELECT authors.name, COUNT(articles.author) as views
+            FROM articles
+            articles, log, authors
+            WHERE concat('/article/', articles.slug) = log.path
+            AND log.status LIKE '%200%'
+            AND articles.author = authors.id
+            GROUP BY authors.name
+            ORDER BY views DESC;
+            """
+
+# 3. query on which days did more than 1% of requests lead to errors?
+query_three = """
+            SELECT total.date,
+                (CAST(error_requests AS real)/total.requests)
+                AS percent
+            FROM (
+                SELECT date_trunc('day', time) AS date,
+                COUNT(*) AS error_requests
+                FROM log
+                WHERE status like '%404%'
+                GROUP BY date
+                ) AS errors,
+                (
+                SELECT date_trunc('day', time) AS date,
+                COUNT(*) AS requests
+                FROM log
+                GROUP BY date
+                ) AS total
+            WHERE errors.date = total.date
+            AND (CAST(error_requests AS real)/total.requests) > 0.01
+            ORDER BY percent DESC;
+"""

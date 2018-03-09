@@ -7,16 +7,16 @@
       3. On which days did more than 1 percent of requests lead to errors?"""
 
 import psycopg2
+DBNAME = "news"
 
-DBNAME = "newsdata"
-
-# A method to perform a query in database
-def make_query(query):
-    db = psycopg2.connect(dbname=DBNAME)
-    c = db.cursor()
-    c.execute(query)
-    return c.fetchall()
-    db.close()
+# Connect to Database. Return a database connection.
+def connect():
+    try:
+        db = psycopg2.connect(dbname=DBNAME)
+        c = db.cursor()
+        return db, c
+    except:
+        print('Unnable to conect to the database')
 
 # 1. query to return the three most popular three articles of all time
 query_one = """
@@ -64,3 +64,15 @@ query_three = """
             AND (CAST(error_requests AS real)/total.requests) > 0.01
             ORDER BY percent DESC;
 """
+
+# A method to perform a query in database
+def get_results(query):
+        db, c = connect()
+        c.execute(query)
+        results = c.fetchall()
+        for i in results:
+            print(i[0]),
+            print("-"),
+            print(i[1])
+        db.close()
+        return

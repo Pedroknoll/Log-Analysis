@@ -9,14 +9,16 @@
 import psycopg2
 DBNAME = "news"
 
+
 # Connect to Database. Return a database connection.
 def connect():
     try:
         db = psycopg2.connect(dbname=DBNAME)
         c = db.cursor()
         return db, c
-    except:
+    except Exception:
         print('Unnable to conect to the database')
+
 
 # 1. query to return the three most popular articles of all time
 query_one = """
@@ -65,6 +67,7 @@ query_three = """
             ORDER BY percent DESC;
 """
 
+
 # A method to perform a query in database
 def get_results(query):
         db, c = connect()
@@ -78,13 +81,16 @@ def get_results(query):
         db.close()
         return
 
+
 # code only execute when the module is running as a program
 if __name__ == "__main__":
     print("\033[7m1- The 3 most popular articles of all time are:\033[m\n")
     get_results(query_one)
 
-    print("\033[7m2- The most popular article authors of all time are:\033[m\n")
+    print("\033[7m2- The most popular article authors of all time are:"\
+        "\033[m\n")
     get_results(query_two)
 
-    print("\033[7m3- Days with more than 1% of request that lead to an error\033[m\n")
+    print("\033[7m3- Days with more than 1% of request that lead to an error"\
+        "\033[m\n")
     get_results(query_three)

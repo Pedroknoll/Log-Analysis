@@ -18,7 +18,7 @@ def connect():
     except:
         print('Unnable to conect to the database')
 
-# 1. query to return the three most popular three articles of all time
+# 1. query to return the three most popular articles of all time
 query_one = """
             SELECT title, COUNT(title) AS views
             FROM articles
@@ -30,7 +30,7 @@ query_one = """
             LIMIT 3;
             """
 
-# 2. query to return the most popular article authors of all time?
+# 2. query to return the most popular article authors of all time
 query_two = """
             SELECT authors.name, COUNT(articles.author) as views
             FROM articles
@@ -42,7 +42,7 @@ query_two = """
             ORDER BY views DESC;
             """
 
-# 3. query on which days did more than 1% of requests lead to errors?
+# 3. query on which days did more than 1% of requests lead to errors
 query_three = """
             SELECT total.date,
                 (CAST(error_requests AS real)/total.requests)
@@ -73,6 +73,18 @@ def get_results(query):
         for i in results:
             print(i[0]),
             print("-"),
-            print(i[1])
+            print i[1]
+        print("\n")
         db.close()
         return
+
+# code only execute when the module is running as a program
+if __name__ == "__main__":
+    print("\033[7m1- The 3 most popular articles of all time are:\033[m\n")
+    get_results(query_one)
+
+    print("\033[7m2- The most popular article authors of all time are:\033[m\n")
+    get_results(query_two)
+
+    print("\033[7m3- Days with more than 1% of request that lead to an error\033[m\n")
+    get_results(query_three)

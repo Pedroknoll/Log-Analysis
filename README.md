@@ -7,12 +7,11 @@ Log analysis is a project for the Udacity FullStack Nanodegre. The code execute 
 
 # Pre-requisites
 - Python installed (Python 3 recommended)
-- Vagrant
 - VirtualBox
 
 # Install
 ## Virtual Machine setup
-1. Install [Vagrant](https://www.vagrantup.com/downloads.html) and [VirtualBox](https://www.virtualbox.org/wiki/Downloads).
+1. Install [VirtualBox](https://www.virtualbox.org/wiki/Downloads).
 2. To configure the virtual machine, download or clone the repository: `git clone https://github.com/udacity/fullstack-nanodegree-vm`. Either way, you will end up with a new directory containing the VM files.
 3. Change to this directory in your terminal with `cd`. Inside, you will find another directory called vagrant. Change directory to the vagrant directory. Using the command:
   `$ vagrant up`

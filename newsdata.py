@@ -7,17 +7,8 @@
       3. On which days did more than 1 percent of requests lead to errors?"""
 
 import psycopg2
+from sys import exit
 DBNAME = "news"
-
-
-# Connect to Database. Return a database connection.
-def connect():
-    try:
-        db = psycopg2.connect(dbname=DBNAME)
-        c = db.cursor()
-        return db, c
-    except Exception:
-        print('Unnable to conect to the database')
 
 
 # 1. query to return the three most popular articles of all time
@@ -50,14 +41,14 @@ query_three = """
                 (CAST(error_requests AS real)/total.requests)
                 AS percent
             FROM (
-                SELECT date_trunc('day', time) AS date,
+                SELECT CAST(date_trunc('day', time) AS date) AS date,
                 COUNT(*) AS error_requests
                 FROM log
                 WHERE status like '%404%'
                 GROUP BY date
                 ) AS errors,
                 (
-                SELECT date_trunc('day', time) AS date,
+                SELECT CAST(date_trunc('day', time) AS date) AS date,
                 COUNT(*) AS requests
                 FROM log
                 GROUP BY date
@@ -68,29 +59,48 @@ query_three = """
 """
 
 
-# A method to perform a query in database
+def connect():
+    """Connect to Database. Return a database connection."""
+    try:
+        db = psycopg2.connect(dbname=DBNAME)
+        c = db.cursor()
+        return db, c
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+        exit(1)
+
+
 def get_results(query):
-        db, c = connect()
-        c.execute(query)
-        results = c.fetchall()
-        for i in results:
-            print(i[0]),
-            print("-"),
-            print i[1]
-        print("\n")
-        db.close()
-        return
+    """A method to perform a query in database"""
+    db, c = connect()
+    c.execute(query)
+    results = c.fetchall()
+    return results
+    db.close()
 
 
-# code only execute when the module is running as a program
+def print_results(query):
+    results = get_results(query)
+    for i in results:
+        if isinstance(i[1], int) is True:
+            print("{} - {:,} views".format(i[0], i[1]))
+        else:
+            print("{} - {:.2f} %".format(i[0], i[1] * 100))
+    print("\n")
+
+
 if __name__ == "__main__":
+    """code only execute when the module is running as a program"""
     print("\033[7m1- The 3 most popular articles of all time are:\033[m\n")
     get_results(query_one)
+    print_results(query_one)
 
     print("\033[7m2- The most popular article authors of all time are:"
           "\033[m\n")
     get_results(query_two)
+    print_results(query_two)
 
     print("\033[7m3- Days with more than 1% of request that lead to an error"
           "\033[m\n")
     get_results(query_three)
+    print_results(query_three)

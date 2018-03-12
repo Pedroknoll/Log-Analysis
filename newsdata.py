@@ -84,13 +84,13 @@ def get_results(query):
 
 # code only execute when the module is running as a program
 if __name__ == "__main__":
-    print(  "\033[7m1- The 3 most popular articles of all time are:\033[m\n")
+    print("\033[7m1- The 3 most popular articles of all time are:\033[m\n")
     get_results(query_one)
 
-    print(  "\033[7m2- The most popular article authors of all time are:"
-            "\033[m\n")
+    print("\033[7m2- The most popular article authors of all time are:"
+          "\033[m\n")
     get_results(query_two)
 
-    print(  "\033[7m3- Days with more than 1% of request that lead to an error"
-            "\033[m\n")
+    print("\033[7m3- Days with more than 1% of request that lead to an error"
+          "\033[m\n")
     get_results(query_three)
